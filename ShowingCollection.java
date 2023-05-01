@@ -11,6 +11,6 @@ public class ShowingCollection {
      * Constructor for objects of class ShowingCollection
      */
     public ShowingCollection() {
-        // initialise instance variables
+        
     }
 }
