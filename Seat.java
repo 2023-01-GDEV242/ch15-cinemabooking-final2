@@ -16,7 +16,7 @@ public class Seat {
      * @param num The numeric component of the seat number.
      */
     public Seat(String letter, int num) {
-        number = String.format(letter + "%d", num);
+        number = String.format(letter + "%02d", num);
         available = true;
     }
 
