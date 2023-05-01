@@ -1,19 +1,19 @@
 
 /**
- * Write a description of class ArtemisDemo here.
+ * Write a description of class TaraDemo here.
  *
  * @author (your name)
  * @version (a version number or a date)
  */
-public class ArtemisDemo
+public class TaraDemo
 {
     // instance variables - replace the example below with your own
     private int x;
 
     /**
-     * Constructor for objects of class ArtemisDemo
+     * Constructor for objects of class TaraDemo
      */
-    public ArtemisDemo()
+    public TaraDemo()
     {
         // initialise instance variables
         x = 0;
