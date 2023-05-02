@@ -14,7 +14,7 @@ import java.time.LocalTime;
 public class Showing
 {
     private int identifier; // just a way to distinguish showings
-    private String film; // private Film film;
+    private Film film;
     private LocalDate date;
     private LocalTime time;
     private Theater theater;
@@ -30,7 +30,7 @@ public class Showing
      * @param minute The minute of the time of the showing.
      * @param theater The theater in which the film will be shown.
      */
-    public Showing(int id, String film, int year, int month, int day,
+    public Showing(int id, Film film, int year, int month, int day,
                    int hour, int minute, Theater theater) {
         identifier = id;
         this.film = film;
@@ -70,11 +70,11 @@ public class Showing
      * @return A string containing the object's data.
      */
     public String toString() {
-        String filmString = film + "\n";
+        String filmString = film.toString() + "\n";
         String theaterString = "Theater number " + theater.getNumber() + "\n";
         String dateString = "Date: " + date + "\n";
         String timeString = "Time: " + time + "\n";
-        String seatString = "Open seats: " + "\n" + getOpenSeatString();
+        String seatString = "Open seats: " + "\n" + String.valueOf(getOpenSeatNum());
         String returnString = filmString + theaterString + dateString + timeString + seatString;
         return returnString;
     }
@@ -83,7 +83,7 @@ public class Showing
      * Returns the film of the showing.
      * @return The film of the showing.
      */
-    public String getFilm() {
+    public Film getFilm() {
         return film;
     }
     
@@ -109,6 +109,37 @@ public class Showing
      */
     public LocalTime getTime() {
         return time;
+    }
+    
+    /**
+     * Returns the number of open seats.
+     * @return The number of open seats.
+     */
+    public int getOpenSeatNum() {
+        int openSeats = 0;
+        for (int index = 0; index < seats.size(); index++) {
+            if (seats.get(index).isFree()) {
+                openSeats++;
+            }
+        }
+        return openSeats;
+    }
+    
+    /**
+     * Searches for adjacent available seats and returns a list strings,
+     * with each string representing a set of available seats.
+     * @return A list of strings, each describing a range of available adjacent seats.
+     */
+    public ArrayList<String> findAdjacent() {
+        // test code
+        String list1 = "AB04 to AB07";
+        String list2 = "AD09 to AD13";
+        String list3 = "AG02 to AG09";
+        ArrayList<String> groups = new ArrayList<String>();
+        groups.add(list1);
+        groups.add(list2);
+        groups.add(list3);
+        return groups;
     }
     
     /**
