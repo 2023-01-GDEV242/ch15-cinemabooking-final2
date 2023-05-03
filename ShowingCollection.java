@@ -1,16 +1,23 @@
+import java.util.ArrayList; // imports the ArrayList Class
 /**
- * Collection of movies that can be shown at the movie theater
+ * Provides a move's detiels like date, time, and theater
  *
- * @author (your name)
- * 5/1/2023
+ * 5/3/2023
  */
 public class ShowingCollection {
     // instance variables
+    private ArrayList<Showing>movies;
+    private Theater theater1;
+    private Film film1;
+    private Showing showing1;
 
     /**
      * Constructor for objects of class ShowingCollection
      */
     public ShowingCollection() {
-        
+        movies.add(theater1);
+        movies.add(film1);
+        movies.add(showing1);
+        System.out.println(movies);
     }
 }

@@ -12,13 +12,13 @@ public class CinemaBookingSystem {
     private ShowingCollection amount;
     private Showing showing; // showing is place holder for now
     private Theater status; // used status here because I thought Cinema would check if theater can show another movie or not
+    private Customer customer;
 
     /**
      * Constructor for objects of class CinemaBookingSystem
      */
     public static void CinemaBookingSystem(String[] args) {
         // initialise instance variables
-        
     }
     
     /**
