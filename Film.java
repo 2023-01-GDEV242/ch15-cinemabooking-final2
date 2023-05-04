@@ -38,6 +38,17 @@ public class Film {
     public int getLengthInMinutes() {
         return lengthInMinutes;
     }
+    
+    /**
+     * Returns the length of the film in hours and minutes, as a string.
+     * @return The length of the film in hours and minutes, as a string.
+     */
+    public String getLengthHourMin() {
+        int hours = lengthInMinutes / 60;
+        int minutes = lengthInMinutes % 60;
+        String timeString = String.format("%d hours, %d minutes", hours, minutes);
+        return timeString;
+    }
 
     /**
      * Sets the name of the film.
@@ -62,6 +73,7 @@ public class Film {
     public String toString() {
         return "Film [name=" + name + ", lengthInMinutes=" + lengthInMinutes + "]";
     }
+    
      public void displayInfo() {
         System.out.println("Movie Name: " + name);
         System.out.println("Length: " + lengthInMinutes + " minutes");

@@ -35,7 +35,7 @@ public class Customer {
      * @param showing The showing to reserve a booking for.
      * @param cinema The cinema where the booking is being made.
      */
-    public void reserveBooking(Showing showing, Theater cinema) {
+    public void reserveBooking(Showing showing, CinemaBookingSystem cinema) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter row number:");
