@@ -35,25 +35,11 @@ public class Customer {
      * @param showing The showing to reserve a booking for.
      * @param cinema The cinema where the booking is being made.
      */
-    public void reserveBooking(Showing showing, CinemaBookingSystem cinema) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter row number:");
-        int row = scanner.nextInt();
-        scanner.nextLine(); // consume the newline character
-        Seat seat;
-
-        System.out.println("Enter seat number:");
-        int seatNumber = scanner.nextInt();
-        scanner.nextLine(); // consume the newline character
-        seat = new Seat(String.valueOf(row), seatNumber);
-
-        Booking booking = new Booking(showing, seat);
-        cinema.addBooking(booking);
-        bookings.add(booking);
-
-        System.out.println("Booking created: " + booking);
-    }
+    public interface Showing {
+    void bookSeat(Customer customer);
+    void bookSeats(List<Customer> customers);
+    List<List<Seat>> getAdjacentSeatGroups();
+}
 
     /**
      * Returns a list of all bookings made by the customer.
