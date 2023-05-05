@@ -8,8 +8,8 @@ import java.time.LocalTime;
  * described by theater (location) and date/time.
  * Holds a collection of seats that can be marked available or unavailable.
  *
- * @author Artemis MacDuffie
- * @version 2023.05.01
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Showing
 {
@@ -64,18 +64,27 @@ public class Showing
     public int getID() {
         return identifier;
     }
+    
+    /**
+     * Returns the name of the film of the showing.
+     * @return The name of the film of the showing.
+     */
+    public String filmName() {
+        return film.toString();
+    }
 
     /**
-     * Converts the data in the object to a string.
-     * @return A string containing the object's data.
+     * Returns the showing's data, in detail.
+     * @return The showing's data, in detail.
      */
-    public String toString() {
-        String filmString = film.toString() + "\n";
-        String theaterString = "Theater number " + theater.getNumber() + "\n";
+    public String showDetail() {
+        String filmString = "\"" + film.toString() + "\"\n";
+        String theaterString = "Theater number " + theater.getNum() + "\n";
         String dateString = "Date: " + date + "\n";
         String timeString = "Time: " + time + "\n";
-        String seatString = "Open seats: " + "\n" + String.valueOf(getOpenSeatNum());
-        String returnString = filmString + theaterString + dateString + timeString + seatString;
+        String seatString = "Open seats: " + "\n" + getOpenSeatNum();
+        String returnString = "Showing " + identifier + "\n" +
+            filmString + theaterString + dateString + timeString + seatString;
         return returnString;
     }
     
@@ -112,13 +121,26 @@ public class Showing
     }
     
     /**
+     * Returns the date and time as a string.
+     * @return The date and time as a string.
+     */
+    public String getDateTime() {
+        String sDate = date.toString();
+        String sTime = time.toString();
+        String dateTime = sDate + ", " + sTime;
+        return dateTime;
+    }
+    
+    /**
      * Returns the number of open seats.
      * @return The number of open seats.
      */
     public int getOpenSeatNum() {
         int openSeats = 0;
-        for (int index = 0; index < seats.size(); index++) {
-            if (seats.get(index).isFree()) {
+        Iterator<Seat> seatIt = seats.iterator();
+        while (seatIt.hasNext()) {
+            Seat thisSeat = seatIt.next();
+            if (thisSeat.isFree()) {
                 openSeats++;
             }
         }
@@ -169,11 +191,11 @@ public class Showing
         while (seatIt.hasNext()) {
             Seat thisSeat = seatIt.next();
             index++;
-            if (thisSeat.isFree()) {
-                seatString += thisSeat.getNum() + " ";
-            }
             if ((index % 10) == 0) {
                 seatString += "\n";
+            }
+            if (thisSeat.isFree()) {
+                seatString += thisSeat.getNum() + " ";
             }
         }
         return seatString;

@@ -1,52 +1,58 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 /**
- * Customer class
- * @author Final2Group
+ * Represents a cinema customer.
+ * 
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Customer {
 
     private String name;
-    private List<Booking> bookings;
+    private String phone;
+    private ArrayList<Booking> bookings;
 
     /**
      * Constructor for objects of class Customer.
      * @param name The name of the customer.
      */
-    public Customer(String name) {
+    public Customer(String name, String phone) {
         this.name = name;
+        this.phone = phone;
         this.bookings = new ArrayList<>();
     }
-
+    
     /**
-     * Displays a list of available showings.
-     * @param showings The list of available showings to display.
+     * Returns the name of the customer.
+     * @return The name of the customer.
      */
-    public void viewShowings(List<Showing> showings) {
-        System.out.println("Available showings:");
-        for (Showing showing : showings) {
-            System.out.println(showing);
-        }
+    public String getName() {
+        return name;
     }
-
+    
     /**
-     * Reserves a booking for the customer.
-     * @param showing The showing to reserve a booking for.
-     * @param cinema The cinema where the booking is being made.
+     * Returns the phone number of the customer.
+     * @return The phone number of the customer.
      */
-    public interface Showing {
-    void bookSeat(Customer customer);
-    void bookSeats(List<Customer> customers);
-    List<List<Seat>> getAdjacentSeatGroups();
-}
+    public String getPhone() {
+        return phone;
+    }
 
     /**
      * Returns a list of all bookings made by the customer.
      * @return The list of all bookings made by the customer.
      */
-    public List<Booking> getBookings() {
+    public ArrayList<Booking> getBookings() {
         return bookings;
+    }
+    
+    /**
+     * Adds a booking for the customer to their list of bookings.
+     */
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
     }
 }
 

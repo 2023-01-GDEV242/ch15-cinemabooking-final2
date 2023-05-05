@@ -4,8 +4,8 @@ import java.util.ArrayList;
  * Objects of this class represent rows in a theater.
  * It holds a collection of seats.
  * 
- * @author Artemis MacDuffie
- * @version 2023.05.01
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Row {
 

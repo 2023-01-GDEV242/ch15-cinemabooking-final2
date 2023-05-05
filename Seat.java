@@ -2,8 +2,8 @@
  * Objects of this class represent seats for a given showing.
  * It has availability and an alphanumeric designator.
  * 
- * @author Artemis MacDuffie
- * @version 2023.05.01
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Seat {
 

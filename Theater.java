@@ -2,8 +2,8 @@
  * Objects of this class represent theaters in a given cinema. It describes how
  * many seats exist in the theater, and in how many rows they are organized.
  * 
- * @author Artemis MacDuffie
- * @version 2023.05.01
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Theater {
 
@@ -27,7 +27,7 @@ public class Theater {
      * Returns the theater's assigned number.
      * @return The theater's assigned number.
      */
-    public int getNumber() {
+    public int getNum() {
         return number;
     }
 

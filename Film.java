@@ -1,12 +1,8 @@
-
-/**
- * Write a description of class Film here.
- *
- * @author (your name)
- * @version (a version number or a date)
- */
 /**
  * Represents a film being shown at a theater.
+ * 
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Film {
 
@@ -24,10 +20,10 @@ public class Film {
     }
 
     /**
-     * Retrieves the name of the film.
+     * Retrieves the name of the film, overriding the toString Object method.
      * @return The name of the film.
      */
-    public String getName() {
+    public String toString() {
         return name;
     }
 
@@ -66,13 +62,13 @@ public class Film {
         this.lengthInMinutes = lengthInMinutes;
     }
 
-    /**
-     * Returns a string representation of the Film object.
-     * @return A string representation of the Film object.
-     */
-    public String toString() {
-        return "Film [name=" + name + ", lengthInMinutes=" + lengthInMinutes + "]";
-    }
+    // /**
+     // * Returns a string representation of the Film object.
+     // * @return A string representation of the Film object.
+     // */
+    // public String toString() {
+        // return "Film [name=" + name + ", lengthInMinutes=" + lengthInMinutes + "]";
+    // }
     
      public void displayInfo() {
         System.out.println("Movie Name: " + name);

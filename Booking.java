@@ -1,13 +1,16 @@
 
 /**
  * Represents a booking for a particular showing and seat.
- * @author Final2 group
+ * 
+ * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
+ * @version: 5/5/2023
  */
 public class Booking {
+    
     private String status;
     private Seat seat;
     private Showing showing;
-
+    
     /**
      * Creates a new Booking object with the given showing and seat, with an initial status of "Booked".
      * @param showing the showing associated with the booking
@@ -41,6 +44,20 @@ public class Booking {
      */
     public Showing getShowing() {
         return showing;
+    }
+    
+    /**
+     * Returns a string of detailed information regarding the booking.
+     * @return A string of detailed information regarding the booking.
+     */
+    public String getInfo() {
+        String film = showing.getFilm().toString();
+        String dateTime = showing.getDateTime();
+        int theater = showing.getTheater().getNum();
+        String seatNum = seat.getNum();
+        String info = "\"" + film + "\"" + dateTime +
+            "\nTheater" + theater + ", seat " + seatNum;
+        return info;
     }
 
     /**
