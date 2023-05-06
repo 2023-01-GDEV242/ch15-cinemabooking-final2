@@ -82,9 +82,10 @@ public class Showing
         String theaterString = "Theater number " + theater.getNum() + "\n";
         String dateString = "Date: " + date + "\n";
         String timeString = "Time: " + time + "\n";
-        String seatString = "Open seats: " + "\n" + getOpenSeatNum();
-        String returnString = "Showing " + identifier + "\n" +
-                        filmString + theaterString + dateString + timeString + seatString;
+        String seatString = "Open seats: " + getOpenSeatNum() + "\n";
+        String seatList = getOpenSeatString();
+        String returnString = "Showing " + identifier + "\n" + filmString + theaterString +
+                                dateString + timeString + seatString + seatList;
         return returnString;
     }
     
@@ -96,7 +97,7 @@ public class Showing
         String filmString = "\"" + film.toString() + "\"\n";
         String theaterString = "    Theater no. " + theater.getNum();
         String dateTime = " at " + getDateTime() + "\n";
-        String seatString = "    Open seats: " + "\n" + getOpenSeatNum();
+        String seatString = "    Open seats: " + getOpenSeatNum();
         String returnString = "Showing " + identifier + ": " +
                                 filmString + theaterString + dateTime + seatString;
         return returnString;
@@ -202,14 +203,38 @@ public class Showing
      * @return A list of strings, each describing a range of available adjacent seats.
      */
     public ArrayList<String> findAdjacent() {
-        // test code
-        String list1 = "AB04 to AB07";
-        String list2 = "AD09 to AD13";
-        String list3 = "AG02 to AG09";
+        ArrayList<Seat> seats = getOpenSeats();
         ArrayList<String> groups = new ArrayList<String>();
-        groups.add(list1);
-        groups.add(list2);
-        groups.add(list3);
+        ArrayList<String> neighbors = new ArrayList<String>();
+        
+        for (int index = 0; index < (seats.size() - 1); index++) {
+            String currentSeat = seats.get(index).getNum();
+            String currentRow = currentSeat.substring(0, 2);
+            int currentNum = Integer.valueOf(currentSeat.substring(2));
+            String nextSeat = seats.get(index + 1).getNum();
+            String nextRow = nextSeat.substring(0, 2);
+            int nextNum = Integer.valueOf(nextSeat.substring(2));
+            if ((currentRow.equals(nextRow)) && ((currentNum + 1) == nextNum)) {
+                neighbors.add(currentSeat);
+                if (index == (seats.size() - 1)) {
+                    String start = neighbors.get(0);
+                    String end = currentSeat;
+                    String group = start + " to " + end;
+                    groups.add(group);
+                    neighbors.clear();
+                }
+            }
+            else if (neighbors.size() > 1) {
+                String start = neighbors.get(0);
+                String end = currentSeat;
+                String group = start + " to " + end;
+                groups.add(group);
+                neighbors.clear();
+            }
+            else {
+                neighbors.clear();
+            }
+        }
         return groups;
     }
         
