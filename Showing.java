@@ -148,6 +148,41 @@ public class Showing
     }
     
     /**
+     * Returns a list of adjacent seat numbers, given a start and end seat number.
+     * If the parameters are out of order, their values are reversed.
+     * If they are not in the same row, returns an empty list.
+     * @param start First of the adjacent seats.
+     * @param end Last of the adjacent seats.
+     * @return A list of adjacent seat numbers.
+     */
+    public ArrayList<String> getAdjacent(String start, String end) {
+        ArrayList<String> adjSeats = new ArrayList<String>();
+        String startRow = start.substring(0, 2);
+        String endRow = end.substring(0, 2);
+        Integer startSeat = Integer.valueOf(start.substring(2));
+        Integer endSeat = Integer.valueOf(end.substring(2));
+        
+        if (startRow.equals(endRow)) {
+            if (startSeat > endSeat) {
+                int startHolder = endSeat;
+                int endHolder = startSeat;
+                startSeat = startHolder;
+                endSeat = endHolder;
+            }
+            int currentSeat = startSeat;
+            while (currentSeat <= endSeat) {
+                String seatNum = String.format(startRow + "%02d", currentSeat);
+                adjSeats.add(seatNum);
+            }
+        }
+        else {
+            System.out.println("Seats entered must be in the same row.");
+        }
+        
+        return adjSeats;
+    }
+    
+    /**
      * Searches for adjacent available seats and returns a list strings,
      * with each string representing a set of available seats.
      * @return A list of strings, each describing a range of available adjacent seats.
@@ -163,7 +198,7 @@ public class Showing
         groups.add(list3);
         return groups;
     }
-    
+        
     /**
      * Returns an array list of available seats for the showing.
      * @return An array list of available seats for the showing.

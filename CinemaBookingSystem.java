@@ -4,8 +4,9 @@ import java.util.Scanner;
 import java.util.Iterator;
 
 /**
- * This is the overall system of the Cinema Booking fianal project. It will hold methods & classes named:
- * Showing Collections, Showing, Theater, Customer, & Showing/theater map
+ * This is the system of the Cinema Booking final project.
+ * It will use classes named Showing, Theater, Customer, Film, Booking, Row, & Seat
+ * to manage a cinema's bookings.
  *
  * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
  * @version: 5/5/2023
@@ -203,9 +204,9 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * Creates a booking for a showing.
+     * Create a booking using text input.
      */
-    public void createBooking() {
+    public void createOneBookingTextInput() {
         Scanner input = new Scanner(System.in);
         System.out.print("Enter showing ID: ");
         int id = input.nextInt();
@@ -249,4 +250,126 @@ public class CinemaBookingSystem {
             System.out.println("Error in showing ID or customer name.");
         }
     }
+    
+    /**
+     * Create a booking via parameters.
+     * @param showing The booking's showing.
+     * @param seatNum The booking's seat number.
+     * @param customer The customer associated with the booking.
+     */
+    public void createBooking(Showing showing, String seatNum, Customer customer) {
+        Seat seat = showing.getSeat(seatNum);
+        seat.changeAvailability();
+        Booking booking = new Booking(showing, seat);
+        customer.addBooking(booking);
+    }
+    
+    /**
+     * Create multiple bookings for a given showing.
+     * @param showing The bookings' showing.
+     * @param seatNumList The bookings' seat numbers.
+     * @param customer The customer associated with the booking.
+     */
+    public void multiBooking(Showing showing, ArrayList<String> seatNumList,
+                            Customer customer) {
+        for (int index = 0; index < seatNumList.size(); index++) {
+            String seat = seatNumList.get(index);
+            if (showing.getSeat(seat).isFree()) {
+                createBooking(showing, seat, customer);
+            }
+            else if (!showing.getSeat(seat).isFree()) {
+                System.out.println("Seat number " + seat + " is unavailable.");
+            }
+            else {
+                System.out.println("Seat number " + seat + " is invalid.");
+            }
+        }
+    }
+    
+    /**
+     * Create bookings of adjacent seats.
+     * @param showing The bookings' showing.
+     * @param customer The customer associated with the booking.
+     */
+    public void bookAdjacent(Showing showing, Customer customer) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter starting seat number: ");
+        String start = input.nextLine();
+        System.out.print("Enter ending seat number: ");
+        String end = input.nextLine();
+        ArrayList<String> seats = showing.getAdjacent(start, end);
+        multiBooking(showing, seats, customer);
+    }
+    
+    /**
+     * Cancels a single booking.
+     * @param customer The customer associated with the booking.
+     * @param showing The showing associated with the booking.
+     */
+    public void cancelOneBooking(Customer customer, Booking booking) {
+        booking.getSeat().changeAvailability();
+        customer.removeBooking(booking);
+    }
+    
+    /**
+     * Cancels all of the bookings a customer has for a given showing.
+     * @param customer The customer associated with the bookings.
+     * @param showing The showing associated with the bookings.
+     */
+    public void cancelAllBookings(Customer customer, Showing showing) {
+        Iterator<Booking> bookings = customer.getBookings().iterator();
+        while (bookings.hasNext()) {
+            Booking booking = bookings.next();
+            if (booking.getShowing() == showing) {
+                cancelOneBooking(customer, booking);
+            }
+        }
+    }
+    
+    /**
+     * Prints the details of a given showing.
+     * @param showing The showing in question.
+     */
+    public void printShowDetail(Showing showing) {
+        String info = showing.showDetail();
+        System.out.println(info);
+    }
+    
+    /**
+     * Finds the adjacent seats for a given showing and prints them.
+     * @param showing The showing being examined.
+     */
+    public void findAdjSeat(Showing showing) {
+        ArrayList<String> adjSeats = showing.findAdjacent();
+        if (adjSeats.size() > 0) {
+            System.out.println("Adjacent seats:");
+            for (int index = 0; index < adjSeats.size(); index++) {
+                System.out.println(adjSeats.get(index));
+            }
+        }
+        else {
+            System.out.println("No adjacent seats for this showing.");
+        }
+    }
+    
+    /**
+     * 
+     */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

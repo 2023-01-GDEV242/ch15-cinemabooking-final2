@@ -39,6 +39,14 @@ public class Customer {
     public String getPhone() {
         return phone;
     }
+    
+    /**
+     * Sets the phone number.
+     * @param The phone number.
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     /**
      * Returns a list of all bookings made by the customer.
@@ -50,9 +58,18 @@ public class Customer {
     
     /**
      * Adds a booking for the customer to their list of bookings.
+     * @param booking The booking to be added.
      */
     public void addBooking(Booking booking) {
         bookings.add(booking);
+    }
+    
+    /**
+     * Removes a booking for the customer to their list of bookings.
+     * @param booking The booking to be removed.
+     */
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
     }
 }
 
