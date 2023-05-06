@@ -27,7 +27,11 @@ public class CinemaBookingSystem {
     private HashSet<Customer> customers;
     private HashSet<Film> currentFilms;
     private int showingID;
-        
+    private String email;
+     
+    
+    
+    
     /**
      * Creates the CinemaBookingSystem object.
      */
@@ -494,6 +498,45 @@ public class CinemaBookingSystem {
         emptyTheaters.removeAll(occupiedTheaters);
         return emptyTheaters;
     }
+    
+     public void cancelShowing(Showing showing, HashSet<Customer> affectedCustomers) {
+        showings.remove(showing);
+        for (Booking booking : getBookings()) {
+            Customer customer = getCustomer());
+            if (affectedCustomers.contains(customer)) {
+                String customerInfo = customer.getCustomerInfo();
+                System.out.println("Contacting customer: " + customerInfo);
+                affectedCustomers.remove(customer);
+            }
+        }
+    }
+    public List<Booking> getBookings() {
+        List<Booking> bookings = new ArrayList<>();
+        for (Customer customer : customers) {
+            bookings.addAll(customer.getBookings());
+        }
+        return bookings;
+    }
+      public Customer getCustomer(String email) {
+        for (Customer customer : customers) {
+            if (customer.getEmail().equals(email)) {
+                return customer;
+            }
+        }
+        return null; // customer not found
+    }
+     public String getCustomerInfo(String email) {
+        Customer customer = getCustomer(email);
+        if (customer == null) {
+            return "Customer not found";
+        } else {
+            return customer.getName() + " (" + customer.getEmail() + ")";
+        }
+    }
+    public String getEmail() {
+        return email;
+    }
+    
 }
 
 
