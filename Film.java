@@ -75,17 +75,17 @@ public class Film {
         System.out.println("Length: " + lengthInMinutes + " minutes");
     }
     
-    public static void main(String[] args) {
-        // Create multiple Movie objects with different names and lengths
-        Film film1 = new Film("The Shawshank Redemption", 142);
-        Film film2 = new Film("The Dark Knight", 152);
-        Film film3 = new Film("The Godfather", 175);
+    // public static void main(String[] args) {
+        // // Create multiple Movie objects with different names and lengths
+        // Film film1 = new Film("The Shawshank Redemption", 142);
+        // Film film2 = new Film("The Dark Knight", 152);
+        // Film film3 = new Film("The Godfather", 175);
 
-        // Call displayInfo() on each Movie object to display their information
-        film1.displayInfo();
-        film2.displayInfo();
-        film3.displayInfo();
-    }
+        // // Call displayInfo() on each Movie object to display their information
+        // film1.displayInfo();
+        // film2.displayInfo();
+        // film3.displayInfo();
+    // }
 }
 
 

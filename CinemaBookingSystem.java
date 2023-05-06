@@ -35,12 +35,12 @@ public class CinemaBookingSystem {
     /**
      * Creates the CinemaBookingSystem object.
      */
-    public void CinemaBookingSystem() {
+    public CinemaBookingSystem() {
         theaters = new ArrayList<Theater>();
         showings = new HashSet<Showing>();
         customers = new HashSet<Customer>();
         currentFilms = new HashSet<Film>();
-        showingID = 0;
+        showingID = 1;
         
         Scanner input = new Scanner(System.in);
         
@@ -49,10 +49,10 @@ public class CinemaBookingSystem {
         input.nextLine();
         
         for (int index = 0; index < numOfTheaters; index++) {
-            System.out.printf("For theater number %d," +
+            System.out.printf("For theater number %d, " +
                 "enter its number of rows: ", (index+1));
             int rows = input.nextInt();
-            System.out.printf("For theater number %d," +
+            System.out.printf("For theater number %d, " +
                 "enter its number of seats per row: ", (index+1));
             int seats = input.nextInt();
             Theater newTheater = new Theater((index+1), rows, seats);
@@ -116,17 +116,13 @@ public class CinemaBookingSystem {
      * Removes a film from the list of currently playing films.
      */
     public void removeFilm() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter film name: ");
-        String name = input.nextLine();
-        Iterator<Film> it = currentFilms.iterator();
-        
-        while (it.hasNext()) {
-            Film film = it.next();
-            if (film.toString().equals(name)) {
-                it.remove();
-                System.out.println(name + " was removed.");
-            }
+        Film film = getFilm();
+        if (film != null) {
+            currentFilms.remove(film);
+            System.out.println(film.toString() + " was removed.");
+        }
+        else {
+            System.out.println("Film not on list of current films.");
         }
     }
     
@@ -134,18 +130,7 @@ public class CinemaBookingSystem {
      * Creates a showing and adds it to the list of showings.
      */
     public void addShowing() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter film name: ");
-        String name = input.nextLine();
-        Iterator<Film> it = currentFilms.iterator();
-        Film film = null;
-        
-        while (it.hasNext()) {
-            Film filmCheck = it.next();
-            if (film.toString().equals(name)) {
-                film = filmCheck;
-            }
-        }
+        Film film = getFilm();
         
         if (film == null) {
             System.out.println("Film not in list.");
@@ -160,18 +145,7 @@ public class CinemaBookingSystem {
             int hour = 14;
             int minute = 30;
             
-            System.out.print("Enter theater number: ");
-            int num = input.nextInt();
-            input.nextLine();
-            Iterator<Theater> iter = theaters.iterator();
-            Theater theater = null;
-            
-            while (iter.hasNext()) {
-                Theater theaterCheck = iter.next();
-                if (theaterCheck.getNum() == num) {
-                    theater = theaterCheck;
-                }
-            }
+            Theater theater = getTheater();
             
             if (theater == null) {
                 System.out.println("Theater number not recognized.");
@@ -220,48 +194,67 @@ public class CinemaBookingSystem {
      * Prints the information of a customer.
      */
     public void getCustomerInfo() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter customer name: ");
-        String name = input.nextLine();
-        Iterator<Customer> it = customers.iterator();
-        
-        while (it.hasNext()) {
-            Customer customer = it.next();
-            if (customer.getName().equals(name)) {
-                System.out.println("Information for " + name + ":");
+        Customer customer = getCustomer();
+        if (customer != null) {
+                System.out.println("Information for " + customer.getName() + ":");
                 System.out.println("    Phone numner: " + customer.getPhone());
                 System.out.println("    Bookings:");
                 ArrayList<Booking> bookings = customer.getBookings();
                 for (int index = 0; index < bookings.size(); index++) {
                     System.out.println(bookings.get(index).getInfo() + "\n");
                 }
-            }
+        }
+        else {
+            System.out.println("Customer not found.");
         }
     }
     
     /**
-     * Create a booking using text input.
+     * Returns a theater according to number, given via text input.
+     * @return A theater according to number, given via text input.
      */
-    public void createOneBookingTextInput() {
+    public Theater getTheater() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter theater number: ");
+        int num = input.nextInt() - 1;
+        input.nextLine();
+        Theater theater = null;
+        if ((num >= 0) && (num < theaters.size())) {
+            theater = theaters.get(num);
+        }
+        return theater;
+    }
+    
+    /**
+     * Returns a showing according to ID, given via text input.
+     * @return A showing according to ID, given via text input.
+     */
+    public Showing getShowing() {
         Scanner input = new Scanner(System.in);
         System.out.print("Enter showing ID: ");
         int id = input.nextInt();
         input.nextLine();
-        System.out.print("Enter seat number: ");
-        String seatNo = input.nextLine();
-        System.out.print("Enter customer name: ");
-        String name = input.nextLine();
-        Iterator<Showing> showIt = showings.iterator();
-        Iterator<Customer> custIt = customers.iterator();
         Showing showing = null;
-        Customer customer = null;
-        
+        Iterator<Showing> showIt = showings.iterator();
         while (showIt.hasNext()) {
             Showing showCheck = showIt.next();
             if (showCheck.getID() == id) {
                 showing = showCheck;
             }
         }
+        return showing;
+    }
+    
+    /**
+     * Returns a customer according to name, given via text input.
+     * @return A customer according to name, given via text input.
+     */
+    public Customer getCustomer() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter customer name: ");
+        String name = input.nextLine();
+        Iterator<Customer> custIt = customers.iterator();
+        Customer customer = null;
         
         while (custIt.hasNext()) {
             Customer custCheck = custIt.next();
@@ -270,15 +263,63 @@ public class CinemaBookingSystem {
             }
         }
         
+        return customer;
+    }
+    
+    /**
+     * Acquires input and describing a seat number and returns it as a string.
+     * @return The seat number.
+     */
+    public String getSeatInput() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter seat number: ");
+        String seatNo = input.nextLine();
+        return seatNo;
+    }
+    
+    /**
+     * Returns a film according to name, given via text input.
+     * @return A film according to name, given via text input.
+     */
+    public Film getFilm() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter film name: ");
+        String name = input.nextLine();
+        Iterator<Film> it = currentFilms.iterator();
+        Film film = null;
+        
+        while (it.hasNext()) {
+            Film check = it.next();
+            if (check.toString().equals(name)) {
+                film = check;
+            }
+        }
+        
+        return film;
+    }
+    
+    /**
+     * Create a booking using text input.
+     */
+    public void createOneBookingTextInput() {
+        Showing showing = getShowing();
+        Customer customer = getCustomer();
+        String seatNo = getSeatInput();
+        
         if ((showing != null) && (customer != null)) {
             Seat seat = showing.getSeat(seatNo);
-            if (seat.isFree()) {
-                seat.changeAvailability();
-                customer.addBooking(new Booking(showing, seat));
-                System.out.println("Booking created!");
+            if (seat != null) {
+                if (seat.isFree()) {
+                    seat.changeAvailability();
+                    customer.addBooking(new Booking(showing, seat));
+                    System.out.println("Booking created!");
+                }
+                else {
+                    System.out.println("Seat is already booked.");
+                }
             }
             else {
-                System.out.println("Seat is already booked.");
+                System.out.println("Seat does not exist.");
             }
         }
         else {
@@ -365,8 +406,15 @@ public class CinemaBookingSystem {
      * @param showing The showing in question.
      */
     public void printShowDetail(Showing showing) {
-        String info = showing.showDetail();
-        System.out.println(info);
+        System.out.println(showing.showDetail());
+    }
+    
+    /**
+     * Prints the details of a showing selected through text input.
+     */
+    public void printShowDetailText() {
+        Showing showing = getShowing();
+        printShowDetail(showing);
     }
     
     /**
@@ -387,23 +435,23 @@ public class CinemaBookingSystem {
     }
     
     /**
+     * Finds the adjacent seats for a showing via text input.
+     */
+    public void findAdjSeatText() {
+        Showing showing = getShowing();
+        findAdjSeat(showing);
+    }
+    
+    /**
      * Prints the showings for a given film, given via text input.
      */
     public void listShowingsByFilm() {
-        Iterator<Film> it = currentFilms.iterator();
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter film name: ");
-        String name = input.nextLine();
-        boolean found = false;
+        Film film = getFilm();
         
-        while (it.hasNext()) {
-            Film film = it.next();
-            if (film.toString().equals(name)) {
-                found = true;
-                listShowingsForFilm(film);
-            }
+        if (film != null) {
+            listShowingsForFilm(film);
         }
-        if (!found) {
+        else {
             System.out.println("Film not currently playing.");
         }
     }
@@ -565,16 +613,6 @@ public class CinemaBookingSystem {
     }
     
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
