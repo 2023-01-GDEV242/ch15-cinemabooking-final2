@@ -498,7 +498,12 @@ public class CinemaBookingSystem {
         emptyTheaters.removeAll(occupiedTheaters);
         return emptyTheaters;
     }
-    
+    /**
+     * Removes a showing from the cinema booking system and contacts affected customers.
+     * 
+     * @param showing the showing to be canceled
+     * @param affectedCustomers the set of customers who have booked tickets for the canceled showing
+     */
      public void cancelShowing(Showing showing, HashSet<Customer> affectedCustomers) {
         showings.remove(showing);
         for (Booking booking : getBookings()) {
@@ -510,6 +515,11 @@ public class CinemaBookingSystem {
             }
         }
     }
+    /**
+     * Retrieves all bookings made by customers in the cinema booking system.
+     * 
+     * @return a list of all bookings made by customers
+     */
     public List<Booking> getBookings() {
         List<Booking> bookings = new ArrayList<>();
         for (Customer customer : customers) {
@@ -517,6 +527,12 @@ public class CinemaBookingSystem {
         }
         return bookings;
     }
+    /**
+     * Retrieves a customer object from the cinema booking system based on their email address.
+     * 
+     * @param email the email address of the customer to retrieve
+     * @return the customer object associated with the specified email address, or null if no such customer is found
+     */
       public Customer getCustomer(String email) {
         for (Customer customer : customers) {
             if (customer.getEmail().equals(email)) {
@@ -525,6 +541,12 @@ public class CinemaBookingSystem {
         }
         return null; // customer not found
     }
+    /**
+     * Retrieves information about a customer in the cinema booking system based on their email address.
+     * 
+     * @param email the email address of the customer to retrieve information for
+     * @return a string containing the name and email address of the customer, or "Customer not found" if no such customer is found
+     */
      public String getCustomerInfo(String email) {
         Customer customer = getCustomer(email);
         if (customer == null) {
@@ -533,6 +555,11 @@ public class CinemaBookingSystem {
             return customer.getName() + " (" + customer.getEmail() + ")";
         }
     }
+    /**
+     * Retrieves the email address associated with a customer object.
+     * 
+     * @return the email address associated with this customer
+     */
     public String getEmail() {
         return email;
     }
