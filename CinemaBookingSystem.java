@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Iterator;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * This is the system of the Cinema Booking final project.
@@ -53,25 +55,55 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * Adds a new film to the list of currently showing films.
+     * Creates data for the system's parameters for ease of testing.
      */
-    public void addFilm() {
-        // Scanner input = new Scanner(System.in);
-        // System.out.print("Enter film name: ");
-        // String name = input.nextLine();
-        // System.out.print("Enter film length, in minutes: ");
-        // int length = input.nextInt();
-        // input.nextLine();
-        // Film film = new Film(name, length);
-        // currentFilms.add(film);
-        
+    public void populateTestData() {
         Film film1 = new Film("The Shawshank Redemption", 142);
         Film film2 = new Film("The Dark Knight", 152);
         Film film3 = new Film("The Godfather", 175);
-        
         currentFilms.add(film1);
         currentFilms.add(film2);
         currentFilms.add(film3);
+        
+        Customer cust1 = new Customer("Bob", "999 555 1234");
+        Customer cust2 = new Customer("Mary", "908 123 4567");
+        Customer cust3 = new Customer("Pikachu", "917 000 5555");
+        addCustomer(cust1);
+        addCustomer(cust2);
+        addCustomer(cust3);
+        
+        if (theaters.size() >= 1) {
+            Showing show1 = new Showing(showingID, film1,
+                                        2023, 5, 10, 12, 30, theaters.get(0));
+            showingID++;
+            showings.add(show1);
+            if (theaters.size() >= 2) {
+                Showing show2 = new Showing(showingID, film2,
+                                        2023, 5, 11, 14, 30, theaters.get(1));
+                showingID++;
+                showings.add(show2);
+                if (theaters.size() >= 3) {
+                    Showing show3 = new Showing(showingID, film3,
+                                        2023, 5, 12, 16, 30, theaters.get(2));
+                    showingID++;
+                    showings.add(show3);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Adds a new film to the list of currently showing films.
+     */
+    public void addFilm() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter film name: ");
+        String name = input.nextLine();
+        System.out.print("Enter film length, in minutes: ");
+        int length = input.nextInt();
+        input.nextLine();
+        Film film = new Film(name, length);
+        currentFilms.add(film);
     }
     
     /**
@@ -154,30 +186,28 @@ public class CinemaBookingSystem {
         Iterator<Showing> it = showings.iterator();
         while (it.hasNext()) {
             Showing showing = it.next();
-            System.out.println(showing.getID() + ": \"" + showing.filmName() +
-                "\"\n    Theater no. " + showing.getTheater().getNum() + " at" +
-                showing.getDateTime() + "\n    Open seats: " + showing.getOpenSeatNum());
+            System.out.println(showing.lessDetail());
         }
     }
     
     /**
-     * Adds a customer to the customer registry.
+     * Adds a customer to the customer registry (via text input).
      */
-    public void addCustomer() {
-        String name1 = "Bob";
-        String name2 = "Mary";
-        String name3 = "Pikachu";
-        String phone1 = "999 555 1234";
-        String phone2 = "908 123 4567";
-        String phone3 = "917 000 5555";
-        
-        Customer cust1 = new Customer(name1, phone1);
-        Customer cust2 = new Customer(name2, phone2);
-        Customer cust3 = new Customer(name3, phone3);
-        
-        customers.add(cust1);
-        customers.add(cust2);
-        customers.add(cust3);
+    public void addCustomerText() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter customer name: ");
+        String name = input.nextLine();
+        System.out.print("Enter customer phone number: ");
+        String number = input.nextLine();
+        addCustomer(new Customer(name, number));
+    }
+    
+    /**
+     * Adds a customer to the customer registry (via parameter).
+     * @param customer The customer being registered.
+     */
+    public void addCustomer(Customer customer) {
+        customers.add(customer);
     }
     
     /**
@@ -238,8 +268,7 @@ public class CinemaBookingSystem {
             Seat seat = showing.getSeat(seatNo);
             if (seat.isFree()) {
                 seat.changeAvailability();
-                Booking booking = new Booking(showing, seat);
-                customer.addBooking(booking);
+                customer.addBooking(new Booking(showing, seat));
                 System.out.println("Booking created!");
             }
             else {
@@ -260,8 +289,7 @@ public class CinemaBookingSystem {
     public void createBooking(Showing showing, String seatNum, Customer customer) {
         Seat seat = showing.getSeat(seatNum);
         seat.changeAvailability();
-        Booking booking = new Booking(showing, seat);
-        customer.addBooking(booking);
+        customer.addBooking(new Booking(showing, seat));
     }
     
     /**
@@ -353,8 +381,87 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * 
+     * Prints the showings for a given film, given via text input.
      */
+    public void listShowingsByFilm() {
+        Iterator<Film> it = currentFilms.iterator();
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter film name: ");
+        String name = input.nextLine();
+        boolean found = false;
+        
+        while (it.hasNext()) {
+            Film film = it.next();
+            if (film.toString().equals(name)) {
+                found = true;
+                listShowingsForFilm(film);
+            }
+        }
+        if (!found) {
+            System.out.println("Film not currently playing.");
+        }
+    }
+    
+    /**
+     * Prints the showings for a given film, given via parameter.
+     * @param film The film used to filter results.
+     */
+    public void listShowingsForFilm(Film film) {
+        Iterator<Showing> it = showings.iterator();
+        System.out.println("Showings for \"" + film.toString() + "\":");
+        while (it.hasNext()) {
+            Showing showing = it.next();
+            if (showing.getFilm() == film) {
+                System.out.println(showing.lessDetail() + "\n");
+            }
+        }
+    }
+    
+    /**
+     * Prints the showings for a given date and time, given via text input.
+     */
+    public void listShowingsByTime() {
+        Scanner input = new Scanner(System.in);
+        int year = 2023;
+        System.out.print("Enter month: ");
+        int month = input.nextInt();
+        input.nextLine();
+        System.out.print("Enter day: ");
+        int day = input.nextInt();
+        input.nextLine();
+        System.out.print("Enter hour: ");
+        int hour = input.nextInt();
+        input.nextLine();
+        System.out.print("Enter minute: ");
+        int minute = input.nextInt();
+        input.nextLine();
+        
+        LocalDate date = LocalDate.of(year, month, day);
+        LocalTime time = LocalTime.of(hour, minute);
+        
+        listShowingsForTime(date, time);
+    }
+    
+    /**
+     * Prints the showings for a given date and time, given via text input.
+     * @param date The showing date.
+     * @param time The showing time, or up to one hour earlier.
+     */
+    public void listShowingsForTime(LocalDate date, LocalTime time) {
+        LocalTime start = time.minusMinutes(15);
+        LocalTime end = time.plusHours(1);
+        Iterator<Showing> it = showings.iterator();
+        System.out.println("Showings for " + date + ", " + time + " and one hour after:");
+        while (it.hasNext()) {
+            Showing showing = it.next();
+            if (showing.getDate().equals(date)) {
+                LocalTime showtime = showing.getTime();
+                if ((showtime.isAfter(start)) && (showtime.isBefore(end))){
+                    System.out.println(showing.lessDetail() + "\n");
+                }
+            }
+        }
+    }
 }
 
 

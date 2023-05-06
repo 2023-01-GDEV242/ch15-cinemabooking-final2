@@ -84,7 +84,21 @@ public class Showing
         String timeString = "Time: " + time + "\n";
         String seatString = "Open seats: " + "\n" + getOpenSeatNum();
         String returnString = "Showing " + identifier + "\n" +
-            filmString + theaterString + dateString + timeString + seatString;
+                        filmString + theaterString + dateString + timeString + seatString;
+        return returnString;
+    }
+    
+    /**
+     * Returns the showing's data, concisely.
+     * @return The showing's data, concisely.
+     */
+    public String lessDetail() {
+        String filmString = "\"" + film.toString() + "\"\n";
+        String theaterString = "    Theater no. " + theater.getNum();
+        String dateTime = " at " + getDateTime() + "\n";
+        String seatString = "    Open seats: " + "\n" + getOpenSeatNum();
+        String returnString = "Showing " + identifier + ": " +
+                                filmString + theaterString + dateTime + seatString;
         return returnString;
     }
     
