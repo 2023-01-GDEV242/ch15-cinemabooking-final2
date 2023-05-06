@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.ArrayList;
-
 /**
  * Represents a film being shown at a theater.
  * 
@@ -11,7 +8,6 @@ public class Film {
 
     private String name;
     private int lengthInMinutes;
-    private List<Showing> showings;
 
     /**
      * Constructor for creating a Film object.
@@ -79,22 +75,17 @@ public class Film {
         System.out.println("Length: " + lengthInMinutes + " minutes");
     }
     
-     /**
-     * Gets a list of all showings of a given film at the cinema.
-     * @param filmName the name of the film to search for
-     * @return a list of all showings of the specified film
-     */
-    public List<Showing> getShowingsForFilm(String filmName) {
-        List<Showing> showingsForFilm = new ArrayList<>();
-        for (Showing showing : showings) {
-            if (showing.getFilm().equals(filmName)) {
-                showingsForFilm.add(showing);
-            }
-        }
-        return showingsForFilm;
+    public static void main(String[] args) {
+        // Create multiple Movie objects with different names and lengths
+        Film film1 = new Film("The Shawshank Redemption", 142);
+        Film film2 = new Film("The Dark Knight", 152);
+        Film film3 = new Film("The Godfather", 175);
+
+        // Call displayInfo() on each Movie object to display their information
+        film1.displayInfo();
+        film2.displayInfo();
+        film3.displayInfo();
     }
 }
-
-
 
 
