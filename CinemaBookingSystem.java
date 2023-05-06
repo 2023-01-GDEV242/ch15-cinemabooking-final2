@@ -4,6 +4,8 @@ import java.util.Scanner;
 import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * This is the system of the Cinema Booking final project.
@@ -461,6 +463,36 @@ public class CinemaBookingSystem {
                 }
             }
         }
+    }
+       /**
+     * Gets a list of all occupied theaters at the cinema for a given time.
+     * @param time the time to search for
+     * @return a list of all occupied theaters at the specified time
+     */
+    public List<Theater> getOccupiedTheaters(LocalDateTime dateTime) {
+    LocalDate date = dateTime.toLocalDate();
+    LocalTime time = dateTime.toLocalTime();
+    List<Showing> showingsForTime = listShowingsForTime(date, time);
+    List<Theater> occupiedTheaters = new ArrayList<>();
+    for (Showing showing : showingsForTime) {
+        Theater theater = showing.getTheater();
+        if (!occupiedTheaters.contains(theater)) {
+            occupiedTheaters.add(theater);
+        }
+    }
+    return occupiedTheaters;
+}
+
+      /**
+     * Gets a list of all empty theaters at the cinema for a given time.
+     * @param time the time to search for
+     * @return a list of all empty theaters at the specified time
+     */
+    public List<Theater> getEmptyTheaters(LocalDateTime time) {
+        List<Theater> occupiedTheaters = getOccupiedTheaters(time);
+        List<Theater> emptyTheaters = new ArrayList<>(theaters);
+        emptyTheaters.removeAll(occupiedTheaters);
+        return emptyTheaters;
     }
 }
 
