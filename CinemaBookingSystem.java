@@ -4,6 +4,8 @@ import java.util.Scanner;
 import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * This is the system of the Cinema Booking final project.
@@ -25,7 +27,11 @@ public class CinemaBookingSystem {
     private HashSet<Customer> customers;
     private HashSet<Film> currentFilms;
     private int showingID;
-        
+    private String email;
+     
+    
+    
+    
     /**
      * Creates the CinemaBookingSystem object.
      */
@@ -510,6 +516,102 @@ public class CinemaBookingSystem {
             }
         }
     }
+       /**
+     * Gets a list of all occupied theaters at the cinema for a given time.
+     * @param time the time to search for
+     * @return a list of all occupied theaters at the specified time
+     */
+    public List<Theater> getOccupiedTheaters(LocalDateTime dateTime) {
+    LocalDate date = dateTime.toLocalDate();
+    LocalTime time = dateTime.toLocalTime();
+    List<Showing> showingsForTime = listShowingsForTime(date, time);
+    List<Theater> occupiedTheaters = new ArrayList<>();
+    for (Showing showing : showingsForTime) {
+        Theater theater = showing.getTheater();
+        if (!occupiedTheaters.contains(theater)) {
+            occupiedTheaters.add(theater);
+        }
+    }
+    return occupiedTheaters;
+}
+
+      /**
+     * Gets a list of all empty theaters at the cinema for a given time.
+     * @param time the time to search for
+     * @return a list of all empty theaters at the specified time
+     */
+    public List<Theater> getEmptyTheaters(LocalDateTime time) {
+        List<Theater> occupiedTheaters = getOccupiedTheaters(time);
+        List<Theater> emptyTheaters = new ArrayList<>(theaters);
+        emptyTheaters.removeAll(occupiedTheaters);
+        return emptyTheaters;
+    }
+    /**
+     * Removes a showing from the cinema booking system and contacts affected customers.
+     * 
+     * @param showing the showing to be canceled
+     * @param affectedCustomers the set of customers who have booked tickets for the canceled showing
+     */
+     public void cancelShowing(Showing showing, HashSet<Customer> affectedCustomers) {
+        showings.remove(showing);
+        for (Booking booking : getBookings()) {
+            Customer customer = getCustomer());
+            if (affectedCustomers.contains(customer)) {
+                String customerInfo = customer.getCustomerInfo();
+                System.out.println("Contacting customer: " + customerInfo);
+                affectedCustomers.remove(customer);
+            }
+        }
+    }
+    /**
+     * Retrieves all bookings made by customers in the cinema booking system.
+     * 
+     * @return a list of all bookings made by customers
+     */
+    public List<Booking> getBookings() {
+        List<Booking> bookings = new ArrayList<>();
+        for (Customer customer : customers) {
+            bookings.addAll(customer.getBookings());
+        }
+        return bookings;
+    }
+    /**
+     * Retrieves a customer object from the cinema booking system based on their email address.
+     * 
+     * @param email the email address of the customer to retrieve
+     * @return the customer object associated with the specified email address, or null if no such customer is found
+     */
+      public Customer getCustomer(String email) {
+        for (Customer customer : customers) {
+            if (customer.getEmail().equals(email)) {
+                return customer;
+            }
+        }
+        return null; // customer not found
+    }
+    /**
+     * Retrieves information about a customer in the cinema booking system based on their email address.
+     * 
+     * @param email the email address of the customer to retrieve information for
+     * @return a string containing the name and email address of the customer, or "Customer not found" if no such customer is found
+     */
+     public String getCustomerInfo(String email) {
+        Customer customer = getCustomer(email);
+        if (customer == null) {
+            return "Customer not found";
+        } else {
+            return customer.getName() + " (" + customer.getEmail() + ")";
+        }
+    }
+    /**
+     * Retrieves the email address associated with a customer object.
+     * 
+     * @return the email address associated with this customer
+     */
+    public String getEmail() {
+        return email;
+    }
+    
 }
 
 
