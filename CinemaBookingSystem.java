@@ -555,7 +555,7 @@ public class CinemaBookingSystem {
      public void cancelShowing(Showing showing, HashSet<Customer> affectedCustomers) {
         showings.remove(showing);
         for (Booking booking : getBookings()) {
-            Customer customer = getCustomer());
+            Customer customer = getCustomer();
             if (affectedCustomers.contains(customer)) {
                 String customerInfo = customer.getCustomerInfo();
                 System.out.println("Contacting customer: " + customerInfo);
