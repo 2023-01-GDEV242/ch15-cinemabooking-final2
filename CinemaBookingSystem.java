@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Iterator;
 import java.time.LocalDate;
@@ -24,13 +25,11 @@ public class CinemaBookingSystem {
     
     private ArrayList<Theater> theaters;
     private HashSet<Showing> showings;
+    private HashMap<Showing, HashSet<Booking>> bookings;
     private HashSet<Customer> customers;
     private HashSet<Film> currentFilms;
     private int showingID;
     private String email;
-     
-    
-    
     
     /**
      * Creates the CinemaBookingSystem object.
@@ -38,6 +37,7 @@ public class CinemaBookingSystem {
     public CinemaBookingSystem() {
         theaters = new ArrayList<Theater>();
         showings = new HashSet<Showing>();
+        bookings = new HashMap<Showing, HashSet<Booking>>();
         customers = new HashSet<Customer>();
         currentFilms = new HashSet<Film>();
         showingID = 1;
@@ -311,7 +311,10 @@ public class CinemaBookingSystem {
             if (seat != null) {
                 if (seat.isFree()) {
                     seat.changeAvailability();
-                    customer.addBooking(new Booking(showing, seat));
+                    Booking booking = new Booking(showing, seat);
+                    customer.addBooking(booking);
+                    HashSet<Booking> bookingsForShow = bookings.get(showing);
+                    bookingsForShow.add(booking);
                     System.out.println("Booking created!");
                 }
                 else {
@@ -470,11 +473,11 @@ public class CinemaBookingSystem {
             }
         }
     }
-    
+        
     /**
      * Prints the showings for a given date and time, given via text input.
      */
-    public void listShowingsByTime() {
+    public void printShowingsByTime() {
         Scanner input = new Scanner(System.in);
         int year = 2023;
         System.out.print("Enter month: ");
@@ -493,7 +496,12 @@ public class CinemaBookingSystem {
         LocalDate date = LocalDate.of(year, month, day);
         LocalTime time = LocalTime.of(hour, minute);
         
-        listShowingsForTime(date, time);
+        ArrayList<Showing> list = listShowingsForTime(date, time);
+        
+        System.out.println("Showings for " + date + ", " + time + " and one hour after:");
+        for (Showing showing : list) {
+            System.out.println(showing.lessDetail() + "\n");
+        }
     }
     
     /**
@@ -501,41 +509,43 @@ public class CinemaBookingSystem {
      * @param date The showing date.
      * @param time The showing time, or up to one hour earlier.
      */
-    public void listShowingsForTime(LocalDate date, LocalTime time) {
+    public ArrayList<Showing> listShowingsForTime(LocalDate date, LocalTime time) {
+        ArrayList<Showing> showList = new ArrayList<Showing>();
         LocalTime start = time.minusMinutes(15);
         LocalTime end = time.plusHours(1);
         Iterator<Showing> it = showings.iterator();
-        System.out.println("Showings for " + date + ", " + time + " and one hour after:");
         while (it.hasNext()) {
             Showing showing = it.next();
             if (showing.getDate().equals(date)) {
                 LocalTime showtime = showing.getTime();
                 if ((showtime.isAfter(start)) && (showtime.isBefore(end))){
-                    System.out.println(showing.lessDetail() + "\n");
+                    showList.add(showing);
                 }
             }
         }
+        return showList;
     }
-       /**
+    
+    /**
      * Gets a list of all occupied theaters at the cinema for a given time.
      * @param time the time to search for
      * @return a list of all occupied theaters at the specified time
      */
     public List<Theater> getOccupiedTheaters(LocalDateTime dateTime) {
-    LocalDate date = dateTime.toLocalDate();
-    LocalTime time = dateTime.toLocalTime();
-    List<Showing> showingsForTime = listShowingsForTime(date, time);
-    List<Theater> occupiedTheaters = new ArrayList<>();
-    for (Showing showing : showingsForTime) {
-        Theater theater = showing.getTheater();
-        if (!occupiedTheaters.contains(theater)) {
-            occupiedTheaters.add(theater);
+        LocalDate date = dateTime.toLocalDate();
+        LocalTime time = dateTime.toLocalTime();
+        List<Showing> showingsForTime = listShowingsForTime(date, time);
+        List<Theater> occupiedTheaters = new ArrayList<>();
+        for (Showing showing : showingsForTime) {
+            Theater theater = showing.getTheater();
+            if (!occupiedTheaters.contains(theater)) {
+                occupiedTheaters.add(theater);
+            }
         }
+        return occupiedTheaters;
     }
-    return occupiedTheaters;
-}
 
-      /**
+    /**
      * Gets a list of all empty theaters at the cinema for a given time.
      * @param time the time to search for
      * @return a list of all empty theaters at the specified time
@@ -546,23 +556,32 @@ public class CinemaBookingSystem {
         emptyTheaters.removeAll(occupiedTheaters);
         return emptyTheaters;
     }
+    
     /**
      * Removes a showing from the cinema booking system and contacts affected customers.
      * 
      * @param showing the showing to be canceled
-     * @param affectedCustomers the set of customers who have booked tickets for the canceled showing
+     * @param affectedCustomers the set of customers who have
+     *                          booked tickets for the canceled showing
      */
-     public void cancelShowing(Showing showing, HashSet<Customer> affectedCustomers) {
-        showings.remove(showing);
-        for (Booking booking : getBookings()) {
-            Customer customer = getCustomer();
-            if (affectedCustomers.contains(customer)) {
-                String customerInfo = customer.getCustomerInfo();
-                System.out.println("Contacting customer: " + customerInfo);
-                affectedCustomers.remove(customer);
+     public void cancelShowing(Showing showing) {
+        HashSet<Booking> cancelled = bookings.get(showing);
+        ArrayList<Customer> affectedCust = new ArrayList<Customer>();
+        for (Customer customer : customers) {
+            ArrayList<Booking> custBook = customer.getBookings();
+            for (Booking booking : custBook) {
+                if (custBook.contains(booking)) {
+                    affectedCust.add(customer);
+                }
             }
         }
+        System.out.println("Affected customers:");
+        for (Customer customer : affectedCust) {
+            System.out.println(customer.getName() + ", " + customer.getPhone());
+        }
+        showings.remove(showing);
     }
+    
     /**
      * Retrieves all bookings made by customers in the cinema booking system.
      * 
@@ -575,34 +594,37 @@ public class CinemaBookingSystem {
         }
         return bookings;
     }
-    /**
-     * Retrieves a customer object from the cinema booking system based on their email address.
-     * 
-     * @param email the email address of the customer to retrieve
-     * @return the customer object associated with the specified email address, or null if no such customer is found
-     */
-      public Customer getCustomer(String email) {
-        for (Customer customer : customers) {
-            if (customer.getEmail().equals(email)) {
-                return customer;
-            }
-        }
-        return null; // customer not found
-    }
-    /**
-     * Retrieves information about a customer in the cinema booking system based on their email address.
-     * 
-     * @param email the email address of the customer to retrieve information for
-     * @return a string containing the name and email address of the customer, or "Customer not found" if no such customer is found
-     */
-     public String getCustomerInfo(String email) {
-        Customer customer = getCustomer(email);
-        if (customer == null) {
-            return "Customer not found";
-        } else {
-            return customer.getName() + " (" + customer.getEmail() + ")";
-        }
-    }
+    
+    // /**
+     // * Retrieves a customer object from the cinema booking system based on their email address.
+     // * 
+     // * @param email the email address of the customer to retrieve
+     // * @return the customer object associated with the specified email address, or null if no such customer is found
+     // */
+    // public Customer getCustomer(String email) {
+        // for (Customer customer : customers) {
+            // if (customer.getEmail().equals(email)) {
+                    // return customer;
+            // }
+        // }
+        // return null; // customer not found
+    // }
+    
+    // /**
+     // * Retrieves information about a customer in the cinema booking system based on their email address.
+     // * 
+     // * @param email the email address of the customer to retrieve information for
+     // * @return a string containing the name and email address of the customer, or "Customer not found" if no such customer is found
+     // */
+     // public String getCustomerInfo(String email) {
+        // Customer customer = getCustomer(email);
+        // if (customer == null) {
+            // return "Customer not found";
+        // } else {
+            // return customer.getName() + " (" + customer.getEmail() + ")";
+        // }
+    // }
+    
     /**
      * Retrieves the email address associated with a customer object.
      * 
@@ -611,7 +633,7 @@ public class CinemaBookingSystem {
     public String getEmail() {
         return email;
     }
-    
+
 }
 
 
