@@ -63,8 +63,13 @@ public class CinemaBookingSystemTest
         assertEquals(35, openSeat.size());
         ArrayList<Booking> bobBook = bob.getBookings();
         assertEquals(1, bobBook.size());
+        ArrayList<Seat> bookSeats = bobBook.get(0).getSeats();
+        assertEquals(1, bookSeats.size());
         Set<Booking> showBook = show.getBookings();
         assertEquals(1, showBook.size());
+        Booking[] showBookArray = showBook.toArray(new Booking[1]);
+        ArrayList<Seat> showSeats = showBookArray[0].getSeats();
+        assertEquals(1, showSeats.size());
     }
 
     @Test
@@ -78,9 +83,14 @@ public class CinemaBookingSystemTest
         ArrayList<Seat> openSeat = show.getOpenSeats();
         assertEquals(33, openSeat.size());
         ArrayList<Booking> bobBook = bob.getBookings();
-        assertEquals(3, bobBook.size());
+        assertEquals(1, bobBook.size());
+        ArrayList<Seat> bookSeats = bobBook.get(0).getSeats();
+        assertEquals(3, bookSeats.size());
         Set<Booking> showBook = show.getBookings();
-        assertEquals(3, showBook.size());
+        assertEquals(1, showBook.size());
+        Booking[] showBookArray = showBook.toArray(new Booking[1]);
+        ArrayList<Seat> showSeats = showBookArray[0].getSeats();
+        assertEquals(3, showSeats.size());
     }
     
     @Test
