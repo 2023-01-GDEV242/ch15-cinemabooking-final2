@@ -59,8 +59,6 @@ public class CinemaBookingSystemTest
     public void testOneBook()
     {
         cinema.createBooking(show, "AC03", bob);
-        ArrayList<Seat> openSeat = show.getOpenSeats();
-        assertEquals(35, openSeat.size());
         ArrayList<Booking> bobBook = bob.getBookings();
         assertEquals(1, bobBook.size());
         ArrayList<Seat> bookSeats = bobBook.get(0).getSeats();
@@ -149,6 +147,31 @@ public class CinemaBookingSystemTest
         assertEquals(false, freeSeat2.isFree());
         assertEquals(false, takenSeat1.isFree());
         assertEquals(false, takenSeat2.isFree());
+    }
+    
+    @Test
+    public void testAvailabilityChange() {
+        ArrayList<Seat> openSeat = show.getOpenSeats();
+        assertEquals(36, openSeat.size());
+        cinema.createBooking(show, "AC01", bob);
+        openSeat = show.getOpenSeats();
+        assertEquals(35, openSeat.size());
+        ArrayList<String> seatNumList = new ArrayList<String>();
+        seatNumList.add("AC02");
+        seatNumList.add("AC03");
+        seatNumList.add("AC04");
+        cinema.multiBooking(show, seatNumList, bob);
+        openSeat = show.getOpenSeats();
+        assertEquals(32, openSeat.size());
+        Seat oneSeat = show.getSeat("AC01");
+        ArrayList<Seat> seatList = new ArrayList<Seat>();
+        seatList.add(oneSeat);
+        cinema.cancelSeats(show, seatList);
+        openSeat = show.getOpenSeats();
+        assertEquals(33, openSeat.size());
+        cinema.cancelBookForCustAndShow(bob, show);
+        openSeat = show.getOpenSeats();
+        assertEquals(36, openSeat.size());
     }
 }
 

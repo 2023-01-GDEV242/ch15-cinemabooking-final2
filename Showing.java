@@ -365,21 +365,20 @@ public class Showing
      * @param bookedSeats The list of seats being boooked.
      */
     public void addBooking(ArrayList<Seat> bookedSeats, Customer customer) {
-        for (Seat seat : bookedSeats) {
-            seat.setUnavailable();
-        }
         Booking booking = new Booking(bookedSeats);
         bookings.put(booking, customer);
         customer.addBooking(booking);
     }
     
     /**
-     * Cancel a booking, given a list of seats.
+     * Cancel bookings, given a list of seats.
      * @param cancelledSeats The list of seats being cancelled.
      */
-    public void cancelBooking(ArrayList<Seat> cancelledSeats) {
+    public void cancelSeats(ArrayList<Seat> cancelledSeats) {
         Set<Booking> bookSet = bookings.keySet();
-        for (Booking booking : bookSet) {
+        Iterator<Booking> it = bookSet.iterator();
+        while (it.hasNext()) {
+            Booking booking = it.next();
             for (Seat seat : cancelledSeats) {
                 if (booking.getSeats().contains(seat)) {
                     Customer customer = bookings.get(booking);
@@ -391,14 +390,22 @@ public class Showing
     }
     
     /**
+     * Cancel a booking.
+     * @param booking The booking being canceled.
+     */
+    public void cancelBooking(Booking booking) {
+        Customer customer = bookings.get(booking);
+        customer.removeBooking(booking);
+        bookings.remove(booking);
+    }
+    
+    /**
      * Cancels all bookings.
      */
     public void cancelAll() {
         Set<Booking> bookSet = bookings.keySet();
         for (Booking booking : bookSet) {
-            Customer customer = bookings.get(booking);
-            customer.removeBooking(booking);
-            bookings.remove(booking);
+            cancelBooking(booking);
         }
     }
 }

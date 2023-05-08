@@ -30,7 +30,7 @@ public class Booking {
     }
     
     /**
-     * 
+     * Sets seats to available.
      */
     public void cancel() {
         for (Seat seat : seats) {

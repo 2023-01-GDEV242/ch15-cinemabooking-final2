@@ -470,7 +470,7 @@ public class CinemaBookingSystem {
      * @param showing The showing associated with the booking.
      */
     public void cancelSeats(Showing showing, ArrayList<Seat> cancelledSeats) {
-        showing.cancelBooking(cancelledSeats);
+        showing.cancelSeats(cancelledSeats);
     }
     
     /**
@@ -478,13 +478,19 @@ public class CinemaBookingSystem {
      * @param customer The customer associated with the bookings.
      * @param showing The showing associated with the bookings.
      */
-    public void cancelBookingsForCustAndShow(Customer customer, Showing showing) {
+    public void cancelBookForCustAndShow(Customer customer, Showing showing) {
         Set<Booking> showBookings = showing.getBookings();
         ArrayList<Booking> custBookings = customer.getBookings();
-        for (Booking booking : custBookings) {
+        ArrayList<Booking> toCancel = new ArrayList<Booking>();
+        Iterator<Booking> it = custBookings.iterator();
+        while (it.hasNext()) {
+            Booking booking = it.next();
             if (showBookings.contains(booking)) {
-                customer.removeBooking(booking);
+                toCancel.add(booking);
             }
+        }
+        for (Booking booking : toCancel) {
+            showing.cancelBooking(booking);
         }
     }
     
