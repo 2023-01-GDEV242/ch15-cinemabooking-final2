@@ -1,5 +1,7 @@
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +22,7 @@ public class Showing
     private LocalTime time;
     private Theater theater;
     private ArrayList<Row> rows;
-    private HashSet<Booking> bookings;
+    private HashMap<Booking, Customer> bookings;
 
     /**
      * Constructor for objects of class Showing.
@@ -40,7 +42,7 @@ public class Showing
         time = LocalTime.of(hour, minute);
         this.theater = theater;
         rows = new ArrayList<Row>();
-        bookings = new HashSet<Booking>();
+        bookings = new HashMap<Booking, Customer>();
         
         int numOfRows = theater.getRows();
         int seatsPerRow = theater.getSeats();
@@ -177,8 +179,27 @@ public class Showing
      * Returns the collection of bookings.
      * @return The collection of bookings.
      */
-    public HashSet<Booking> getBookings() {
-        return bookings;
+    public Set<Booking> getBookings() {
+        return bookings.keySet();
+    }
+    
+    /**
+     * Returns the customer of a specific booking.
+     * @param booking The specific booking.
+     * @return The customer of a specific booking.
+     */
+    public Customer getCust(Booking booking) {
+        Customer customer = bookings.get(booking);
+        return customer;
+    }
+    
+    /**
+     * Returns the collection of all customers who currently have bookings for this showing.
+     * @return The collection of all customers who currently have bookings for this showing.
+     */
+    public Collection<Customer> getAllCust() {
+        Collection customers = bookings.values();
+        return customers;
     }
     
     /**
@@ -343,25 +364,41 @@ public class Showing
      * Add a booking to the showing.
      * @param bookedSeats The list of seats being boooked.
      */
-    public void addBooking(ArrayList<Seat> bookedSeats) {
+    public void addBooking(ArrayList<Seat> bookedSeats, Customer customer) {
         for (Seat seat : bookedSeats) {
             seat.setUnavailable();
         }
         Booking booking = new Booking(bookedSeats);
-        bookings.add(booking);
+        bookings.put(booking, customer);
+        customer.addBooking(booking);
     }
     
     /**
-     * Cancel a booking.
+     * Cancel a booking, given a list of seats.
      * @param cancelledSeats The list of seats being cancelled.
      */
     public void cancelBooking(ArrayList<Seat> cancelledSeats) {
-        for (Booking booking : bookings) {
+        Set<Booking> bookSet = bookings.keySet();
+        for (Booking booking : bookSet) {
             for (Seat seat : cancelledSeats) {
                 if (booking.getSeats().contains(seat)) {
-                    booking.cancel();
+                    Customer customer = bookings.get(booking);
+                    customer.removeBooking(booking);
+                    bookings.remove(booking);
                 }
             }
+        }
+    }
+    
+    /**
+     * Cancels all bookings.
+     */
+    public void cancelAll() {
+        Set<Booking> bookSet = bookings.keySet();
+        for (Booking booking : bookSet) {
+            Customer customer = bookings.get(booking);
+            customer.removeBooking(booking);
+            bookings.remove(booking);
         }
     }
 }

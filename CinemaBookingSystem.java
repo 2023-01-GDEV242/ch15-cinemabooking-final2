@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Iterator;
@@ -216,7 +217,7 @@ public class CinemaBookingSystem {
                 for (Showing showing : showings) {
                     boolean hasBookings = false;
                     String seatList = "";
-                    HashSet<Booking> showBookings = showing.getBookings();
+                    Set<Booking> showBookings = showing.getBookings();
                     for (Booking booking : custBookings) {
                         if (showBookings.contains(booking)) {
                             ArrayList<Seat> bookSeats = booking.getSeats();
@@ -367,8 +368,7 @@ public class CinemaBookingSystem {
         Seat seat = showing.getSeat(seatNum);
         ArrayList<Seat> seatList = new ArrayList<Seat>();
         seatList.add(seat);
-        Booking booking = new Booking(seatList);
-        customer.addBooking(booking);
+        showing.addBooking(seatList, customer);
     }
     
     /**
@@ -393,8 +393,7 @@ public class CinemaBookingSystem {
                 System.out.println("Seat number " + seat + " is invalid.");
             }
         }
-        Booking booking = new Booking(bookingSeats);
-        customer.addBooking(booking);
+        showing.addBooking(bookingSeats, customer);
     }
     
     /**
@@ -424,12 +423,12 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * Cancels a single booking.
-     * @param customer The customer associated with the booking.
+     * Cancels a set of seats from their bookings.
+     * @param cancelledSeats The seats to be cancelled.
      * @param showing The showing associated with the booking.
      */
-    public void cancelOneBooking(Customer customer, Booking booking) {
-        customer.removeBooking(booking);
+    public void cancelSeats(Showing showing, ArrayList<Seat> cancelledSeats) {
+        showing.cancelBooking(cancelledSeats);
     }
     
     /**
@@ -437,10 +436,13 @@ public class CinemaBookingSystem {
      * @param customer The customer associated with the bookings.
      * @param showing The showing associated with the bookings.
      */
-    public void cancelAllBookings(Customer customer, Showing showing) {
-        HashSet<Booking> bookings = showing.getBookings();
-        for (Booking booking : bookings) {
-            booking.cancel();
+    public void cancelBookingsForCustAndShow(Customer customer, Showing showing) {
+        Set<Booking> showBookings = showing.getBookings();
+        ArrayList<Booking> custBookings = customer.getBookings();
+        for (Booking booking : custBookings) {
+            if (showBookings.contains(booking)) {
+                customer.removeBooking(booking);
+            }
         }
     }
     
@@ -599,26 +601,15 @@ public class CinemaBookingSystem {
     
     /**
      * Removes a showing from the cinema booking system and contacts affected customers.
-     * 
-     * @param showing the showing to be canceled
-     * @param affectedCustomers the set of customers who have
-     *                          booked tickets for the canceled showing
+     * @param showing The showing to be canceled.
      */
      public void cancelShowing(Showing showing) {
-        HashSet<Booking> cancelled = showing.getBookings();
-        ArrayList<Customer> affectedCust = new ArrayList<Customer>();
-        for (Customer customer : customers) {
-            ArrayList<Booking> custBook = customer.getBookings();
-            for (Booking booking : custBook) {
-                if (custBook.contains(booking)) {
-                    affectedCust.add(customer);
-                }
-            }
-        }
+        Collection<Customer> affectedCust = showing.getAllCust();
         System.out.println("Affected customers:");
         for (Customer customer : affectedCust) {
             System.out.println(customer.getName() + ", " + customer.getPhone());
         }
+        showing.cancelAll();
         showings.remove(showing);
     }
     
