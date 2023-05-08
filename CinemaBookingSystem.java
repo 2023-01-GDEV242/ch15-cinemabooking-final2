@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Iterator;
 import java.time.LocalDate;
@@ -25,19 +24,17 @@ public class CinemaBookingSystem {
     
     private ArrayList<Theater> theaters;
     private HashSet<Showing> showings;
-    private HashMap<Showing, HashSet<Booking>> bookings;
     private HashSet<Customer> customers;
     private HashSet<Film> currentFilms;
     private int showingID;
     private String email;
     
     /**
-     * Creates the CinemaBookingSystem object.
+     * Creates the CinemaBookingSystem object, with text input for certain parameters.
      */
     public CinemaBookingSystem() {
         theaters = new ArrayList<Theater>();
         showings = new HashSet<Showing>();
-        bookings = new HashMap<Showing, HashSet<Booking>>();
         customers = new HashSet<Customer>();
         currentFilms = new HashSet<Film>();
         showingID = 1;
@@ -55,6 +52,22 @@ public class CinemaBookingSystem {
             System.out.printf("For theater number %d, " +
                 "enter its number of seats per row: ", (index+1));
             int seats = input.nextInt();
+            Theater newTheater = new Theater((index+1), rows, seats);
+            theaters.add(newTheater);
+        }
+    }
+    
+    /**
+     * Creates the CinemaBookingSystem object, with parameters, assuming identical theaters.
+     */
+    public CinemaBookingSystem(int numOfTheaters, int rows, int seats) {
+        theaters = new ArrayList<Theater>();
+        showings = new HashSet<Showing>();
+        customers = new HashSet<Customer>();
+        currentFilms = new HashSet<Film>();
+        showingID = 1;
+        
+        for (int index = 0; index < numOfTheaters; index++) {
             Theater newTheater = new Theater((index+1), rows, seats);
             theaters.add(newTheater);
         }
@@ -199,9 +212,24 @@ public class CinemaBookingSystem {
                 System.out.println("Information for " + customer.getName() + ":");
                 System.out.println("    Phone numner: " + customer.getPhone());
                 System.out.println("    Bookings:");
-                ArrayList<Booking> bookings = customer.getBookings();
-                for (int index = 0; index < bookings.size(); index++) {
-                    System.out.println(bookings.get(index).getInfo() + "\n");
+                ArrayList<Booking> custBookings = customer.getBookings();
+                for (Showing showing : showings) {
+                    boolean hasBookings = false;
+                    String seatList = "";
+                    HashSet<Booking> showBookings = showing.getBookings();
+                    for (Booking booking : custBookings) {
+                        if (showBookings.contains(booking)) {
+                            ArrayList<Seat> bookSeats = booking.getSeats();
+                            for (Seat seat : bookSeats) {
+                                seatList += seat.getNum() + " ";
+                            }
+                            hasBookings = true;
+                        }
+                    }
+                    if (hasBookings) {
+                        System.out.println(showing.minDetail());
+                        System.out.println("Seats: " + seatList);
+                    }
                 }
         }
         else {
@@ -299,7 +327,7 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * Create a booking using text input.
+     * Create a booking for one seat using text input.
      */
     public void createOneBookingTextInput() {
         Showing showing = getShowing();
@@ -310,11 +338,10 @@ public class CinemaBookingSystem {
             Seat seat = showing.getSeat(seatNo);
             if (seat != null) {
                 if (seat.isFree()) {
-                    seat.changeAvailability();
-                    Booking booking = new Booking(showing, seat);
+                    ArrayList<Seat> seats = new ArrayList<Seat>();
+                    seats.add(seat);
+                    Booking booking = new Booking(seats);
                     customer.addBooking(booking);
-                    HashSet<Booking> bookingsForShow = bookings.get(showing);
-                    bookingsForShow.add(booking);
                     System.out.println("Booking created!");
                 }
                 else {
@@ -331,15 +358,17 @@ public class CinemaBookingSystem {
     }
     
     /**
-     * Create a booking via parameters.
+     * Create a booking via parameters for one seat.
      * @param showing The booking's showing.
      * @param seatNum The booking's seat number.
      * @param customer The customer associated with the booking.
      */
     public void createBooking(Showing showing, String seatNum, Customer customer) {
         Seat seat = showing.getSeat(seatNum);
-        seat.changeAvailability();
-        customer.addBooking(new Booking(showing, seat));
+        ArrayList<Seat> seatList = new ArrayList<Seat>();
+        seatList.add(seat);
+        Booking booking = new Booking(seatList);
+        customer.addBooking(booking);
     }
     
     /**
@@ -350,22 +379,27 @@ public class CinemaBookingSystem {
      */
     public void multiBooking(Showing showing, ArrayList<String> seatNumList,
                             Customer customer) {
+        ArrayList<Seat> bookingSeats = new ArrayList<Seat>();
         for (int index = 0; index < seatNumList.size(); index++) {
-            String seat = seatNumList.get(index);
-            if (showing.getSeat(seat).isFree()) {
-                createBooking(showing, seat, customer);
+            String seatNum = seatNumList.get(index);
+            Seat seat = showing.getSeat(seatNum);
+            if (seat.isFree()) {
+                bookingSeats.add(seat);
             }
-            else if (!showing.getSeat(seat).isFree()) {
+            else if (!seat.isFree()) {
                 System.out.println("Seat number " + seat + " is unavailable.");
             }
             else {
                 System.out.println("Seat number " + seat + " is invalid.");
             }
         }
+        Booking booking = new Booking(bookingSeats);
+        customer.addBooking(booking);
     }
     
     /**
-     * Create bookings of adjacent seats.
+     * Create booking of adjacent seats;
+     * showing and customer are entered as parameters.
      * @param showing The bookings' showing.
      * @param customer The customer associated with the booking.
      */
@@ -380,12 +414,21 @@ public class CinemaBookingSystem {
     }
     
     /**
+     * Create booking of adjacent seats;
+     * showing and customer are entered by text.
+     */
+    public void bookAdjText() {
+        Customer customer = getCustomer();
+        Showing showing = getShowing();
+        bookAdjacent(showing, customer);
+    }
+    
+    /**
      * Cancels a single booking.
      * @param customer The customer associated with the booking.
      * @param showing The showing associated with the booking.
      */
     public void cancelOneBooking(Customer customer, Booking booking) {
-        booking.getSeat().changeAvailability();
         customer.removeBooking(booking);
     }
     
@@ -395,12 +438,9 @@ public class CinemaBookingSystem {
      * @param showing The showing associated with the bookings.
      */
     public void cancelAllBookings(Customer customer, Showing showing) {
-        Iterator<Booking> bookings = customer.getBookings().iterator();
-        while (bookings.hasNext()) {
-            Booking booking = bookings.next();
-            if (booking.getShowing() == showing) {
-                cancelOneBooking(customer, booking);
-            }
+        HashSet<Booking> bookings = showing.getBookings();
+        for (Booking booking : bookings) {
+            booking.cancel();
         }
     }
     
@@ -565,7 +605,7 @@ public class CinemaBookingSystem {
      *                          booked tickets for the canceled showing
      */
      public void cancelShowing(Showing showing) {
-        HashSet<Booking> cancelled = bookings.get(showing);
+        HashSet<Booking> cancelled = showing.getBookings();
         ArrayList<Customer> affectedCust = new ArrayList<Customer>();
         for (Customer customer : customers) {
             ArrayList<Booking> custBook = customer.getBookings();
@@ -582,18 +622,18 @@ public class CinemaBookingSystem {
         showings.remove(showing);
     }
     
-    /**
-     * Retrieves all bookings made by customers in the cinema booking system.
-     * 
-     * @return a list of all bookings made by customers
-     */
-    public List<Booking> getBookings() {
-        List<Booking> bookings = new ArrayList<>();
-        for (Customer customer : customers) {
-            bookings.addAll(customer.getBookings());
-        }
-        return bookings;
-    }
+    // /**
+     // * Retrieves all bookings made by customers in the cinema booking system.
+     // * 
+     // * @return a list of all bookings made by customers
+     // */
+    // public List<Booking> getBookings() {
+        // List<Booking> bookings = new ArrayList<>();
+        // for (Customer customer : customers) {
+            // bookings.addAll(customer.getBookings());
+        // }
+        // return bookings;
+    // }
     
     // /**
      // * Retrieves a customer object from the cinema booking system based on their email address.

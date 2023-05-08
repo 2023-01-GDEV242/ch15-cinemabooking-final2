@@ -37,10 +37,16 @@ public class Seat {
     }
 
     /**
-     * Change the availability of the seat. If it is available, it
-     * will no longer be. If it is unavailable, it will become free.
+     * Set the seat to unavailable.
      */
-    public void changeAvailability() {
-        available = !available;
+    public void setUnavailable() {
+        available = false;
+    }
+    
+    /**
+     * Set the seat to available.
+     */
+    public void setAvailable() {
+        available = true;
     }
 }

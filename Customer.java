@@ -69,6 +69,7 @@ public class Customer {
      * @param booking The booking to be removed.
      */
     public void removeBooking(Booking booking) {
+        booking.cancel();
         bookings.remove(booking);
     }
 }

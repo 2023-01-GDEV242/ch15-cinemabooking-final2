@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +19,8 @@ public class Showing
     private LocalDate date;
     private LocalTime time;
     private Theater theater;
-    private ArrayList<Seat> seats;
+    private ArrayList<Row> rows;
+    private HashSet<Booking> bookings;
 
     /**
      * Constructor for objects of class Showing.
@@ -37,12 +39,13 @@ public class Showing
         date = LocalDate.of(year, month, day);
         time = LocalTime.of(hour, minute);
         this.theater = theater;
-        seats = new ArrayList<Seat>();
+        rows = new ArrayList<Row>();
+        bookings = new HashSet<Booking>();
         
-        int rows = theater.getRows();
+        int numOfRows = theater.getRows();
         int seatsPerRow = theater.getSeats();
         
-        for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
+        for (int rowIndex = 0; rowIndex < numOfRows; rowIndex++) {
             int firstNum = rowIndex / 26;
             int secondNum = rowIndex % 26;
             char firstLetter = (char)(firstNum + 'A');
@@ -50,10 +53,7 @@ public class Showing
             char[] letters = {firstLetter, secondLetter};
             String rowNum = String.valueOf(letters);
             Row newRow = new Row(rowNum, seatsPerRow);
-            Iterator<Seat> newSeats = newRow.getSeats().iterator();
-            while (newSeats.hasNext()) {
-                seats.add(newSeats.next());
-            }
+            rows.add(newRow);
         }
     }
     
@@ -104,6 +104,18 @@ public class Showing
     }
     
     /**
+     * Returns the showing's detail, minimally, as a string.
+     * @return The showing's detail, minimally, as a string.
+     */
+    public String minDetail() {
+        String filmString = "\"" + film.toString() + "\" | ";
+        String theaterString = "Theater no. " + theater.getNum();
+        String dateTime = " at " + getDateTime();
+        String returnString = filmString + theaterString + dateTime;
+        return returnString;
+    }
+    
+    /**
      * Returns the film of the showing.
      * @return The film of the showing.
      */
@@ -147,16 +159,40 @@ public class Showing
     }
     
     /**
+     * Returns a collection of all the seats of the showing.
+     * @param The collection of all seats of the showing.
+     */
+    public ArrayList<Seat> getSeats() {
+        ArrayList<Seat> seats = new ArrayList<Seat>();
+        for (Row row : rows) {
+            ArrayList<Seat> rowSeats = row.getSeats();
+            for (Seat seat : rowSeats) {
+                seats.add(seat);
+            }
+        }
+        return seats;
+    }
+    
+    /**
+     * Returns the collection of bookings.
+     * @return The collection of bookings.
+     */
+    public HashSet<Booking> getBookings() {
+        return bookings;
+    }
+    
+    /**
      * Returns the number of open seats.
      * @return The number of open seats.
      */
     public int getOpenSeatNum() {
         int openSeats = 0;
-        Iterator<Seat> seatIt = seats.iterator();
-        while (seatIt.hasNext()) {
-            Seat thisSeat = seatIt.next();
-            if (thisSeat.isFree()) {
-                openSeats++;
+        for(Row row : rows) {
+            ArrayList<Seat> seats = row.getSeats();
+            for (Seat seat : seats) {
+                if (seat.isFree()) {
+                    openSeats++;
+                }
             }
         }
         return openSeats;
@@ -188,6 +224,7 @@ public class Showing
             while (currentSeat <= endSeat) {
                 String seatNum = String.format(startRow + "%02d", currentSeat);
                 adjSeats.add(seatNum);
+                currentSeat++;
             }
         }
         else {
@@ -244,11 +281,12 @@ public class Showing
      */
     public ArrayList<Seat> getOpenSeats() {
         ArrayList<Seat> openSeats = new ArrayList<Seat>();
-        Iterator<Seat> seatIt = seats.iterator();
-        while (seatIt.hasNext()) {
-            Seat thisSeat = seatIt.next();
-            if (thisSeat.isFree()) {
-                openSeats.add(thisSeat);
+        for(Row row : rows) {
+            ArrayList<Seat> seats = row.getSeats();
+            for (Seat seat : seats) {
+                if (seat.isFree()) {
+                    openSeats.add(seat);
+                }
             }
         }
         return openSeats;
@@ -260,16 +298,11 @@ public class Showing
      */
     public String getOpenSeatString() {
         String seatString = "";
-        int index = 0;
-        Iterator<Seat> seatIt = seats.iterator();
-        while (seatIt.hasNext()) {
-            Seat thisSeat = seatIt.next();
-            index++;
-            if ((index % 10) == 0) {
+        ArrayList<Seat> openSeats = getOpenSeats();
+        for(int index = 0; index < openSeats.size(); index++) {
+            seatString += openSeats.get(index).getNum() + " ";
+            if (((index + 1) % 10) == 0) {
                 seatString += "\n";
-            }
-            if (thisSeat.isFree()) {
-                seatString += thisSeat.getNum() + " ";
             }
         }
         return seatString;
@@ -282,9 +315,12 @@ public class Showing
      */
     public Seat getSeat(String number) {
         Seat search;
-        for (int index = 0; index < seats.size(); index++) {
-            if (number == seats.get(index).getNum()) {
-                return seats.get(index);
+        for(Row row : rows) {
+            ArrayList<Seat> seats = row.getSeats();
+            for (Seat seat : seats) {
+                if (seat.getNum().equals(number)) {
+                    return seat;
+                }
             }
         }
         return null;
@@ -303,4 +339,29 @@ public class Showing
         return false;
     }
     
+    /**
+     * Add a booking to the showing.
+     * @param bookedSeats The list of seats being boooked.
+     */
+    public void addBooking(ArrayList<Seat> bookedSeats) {
+        for (Seat seat : bookedSeats) {
+            seat.setUnavailable();
+        }
+        Booking booking = new Booking(bookedSeats);
+        bookings.add(booking);
+    }
+    
+    /**
+     * Cancel a booking.
+     * @param cancelledSeats The list of seats being cancelled.
+     */
+    public void cancelBooking(ArrayList<Seat> cancelledSeats) {
+        for (Booking booking : bookings) {
+            for (Seat seat : cancelledSeats) {
+                if (booking.getSeats().contains(seat)) {
+                    booking.cancel();
+                }
+            }
+        }
+    }
 }
