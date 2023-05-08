@@ -29,7 +29,7 @@ public class CinemaBookingSystem {
     private HashSet<Customer> customers;
     private HashSet<Film> currentFilms;
     private int showingID;
-    private String email;
+    private int theaterMax;
     
     /**
      * Creates the CinemaBookingSystem object, with text input for certain parameters.
@@ -40,6 +40,7 @@ public class CinemaBookingSystem {
         customers = new HashSet<Customer>();
         currentFilms = new HashSet<Film>();
         showingID = 1;
+        theaterMax = 1;
         
         Scanner input = new Scanner(System.in);
         
@@ -49,13 +50,14 @@ public class CinemaBookingSystem {
         
         for (int index = 0; index < numOfTheaters; index++) {
             System.out.printf("For theater number %d, " +
-                "enter its number of rows: ", (index+1));
+                "enter its number of rows: ", (theaterMax));
             int rows = input.nextInt();
             System.out.printf("For theater number %d, " +
-                "enter its number of seats per row: ", (index+1));
+                "enter its number of seats per row: ", (theaterMax));
             int seats = input.nextInt();
-            Theater newTheater = new Theater((index+1), rows, seats);
+            Theater newTheater = new Theater((theaterMax), rows, seats);
             theaters.add(newTheater);
+            theaterMax++;
         }
     }
     
@@ -68,10 +70,12 @@ public class CinemaBookingSystem {
         customers = new HashSet<Customer>();
         currentFilms = new HashSet<Film>();
         showingID = 1;
+        theaterMax = 1;
         
         for (int index = 0; index < numOfTheaters; index++) {
-            Theater newTheater = new Theater((index+1), rows, seats);
+            Theater newTheater = new Theater((theaterMax), rows, seats);
             theaters.add(newTheater);
+            theaterMax++;
         }
     }
     
@@ -116,7 +120,7 @@ public class CinemaBookingSystem {
     /**
      * Adds a new film to the list of currently showing films.
      */
-    public void addFilm() {
+    public void addFilmText() {
         Scanner input = new Scanner(System.in);
         System.out.print("Enter film name: ");
         String name = input.nextLine();
@@ -124,13 +128,13 @@ public class CinemaBookingSystem {
         int length = input.nextInt();
         input.nextLine();
         Film film = new Film(name, length);
-        currentFilms.add(film);
+        addFilm(film);
     }
     
     /**
      * Removes a film from the list of currently playing films.
      */
-    public void removeFilm() {
+    public void removeFilmText() {
         Film film = getFilm();
         if (film != null) {
             currentFilms.remove(film);
@@ -144,7 +148,7 @@ public class CinemaBookingSystem {
     /**
      * Creates a showing and adds it to the list of showings.
      */
-    public void addShowing() {
+    public void addShowingText() {
         Film film = getFilm();
         
         if (film == null) {
@@ -160,7 +164,7 @@ public class CinemaBookingSystem {
             int hour = 14;
             int minute = 30;
             
-            Theater theater = getTheater();
+            Theater theater = getTheaterText();
             
             if (theater == null) {
                 System.out.println("Theater number not recognized.");
@@ -169,9 +173,30 @@ public class CinemaBookingSystem {
                 showingID++;
                 Showing showing =
                     new Showing(showingID, film, year, month, day, hour, minute, theater);
-                showings.add(showing);
+                addShow(showing);
             }
         }
+    }
+    
+    /**
+     * Creates a theater and adds it to the list of theaters,
+     * given the theater's rows and seats.
+     * @param rows Number of rows in the theater
+     * @param seats Number of seats per row
+     */
+    public void addTheaterNumParam(int rows, int seats) {
+        Theater theater = new Theater(theaterMax, rows, seats);
+        theaters.add(theater);
+        theaterMax++;
+    }
+    
+    /**
+     * Adds a theater given as a parameter.
+     * @param theater The theater being added
+     */
+    public void addTheater(Theater theater) {
+        theaters.add(theater);
+        theaterMax++;
     }
     
     /**
@@ -203,6 +228,22 @@ public class CinemaBookingSystem {
      */
     public void addCustomer(Customer customer) {
         customers.add(customer);
+    }
+    
+    /**
+     * Adds a film to film list (via parameter).
+     * @param film The film being added.
+     */
+    public void addFilm(Film film) {
+        currentFilms.add(film);
+    }
+    
+    /**
+     * Adds a showing showing list (via parameter).
+     * @param showing The showing being added.
+     */
+    public void addShow(Showing showing) {
+        showings.add(showing);
     }
     
     /**
@@ -243,7 +284,7 @@ public class CinemaBookingSystem {
      * Returns a theater according to number, given via text input.
      * @return A theater according to number, given via text input.
      */
-    public Theater getTheater() {
+    public Theater getTheaterText() {
         Scanner input = new Scanner(System.in);
         System.out.print("Enter theater number: ");
         int num = input.nextInt() - 1;
@@ -657,14 +698,14 @@ public class CinemaBookingSystem {
         // }
     // }
     
-    /**
-     * Retrieves the email address associated with a customer object.
-     * 
-     * @return the email address associated with this customer
-     */
-    public String getEmail() {
-        return email;
-    }
+    // /**
+     // * Retrieves the email address associated with a customer object.
+     // * 
+     // * @return the email address associated with this customer
+     // */
+    // public String getEmail() {
+        // return email;
+    // }
 
 }
 
