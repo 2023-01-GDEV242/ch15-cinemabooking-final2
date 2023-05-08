@@ -3,7 +3,7 @@
  * It has availability and an alphanumeric designator.
  * 
  * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
- * @version: 5/5/2023
+ * @version: 5/7/2023
  */
 public class Seat {
 

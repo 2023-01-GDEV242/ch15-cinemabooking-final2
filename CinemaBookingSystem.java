@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * to manage a cinema's bookings.
  *
  * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
- * @version: 5/5/2023
+ * @version: 5/7/2023
  */
 public class CinemaBookingSystem {
     // instance variables for the system

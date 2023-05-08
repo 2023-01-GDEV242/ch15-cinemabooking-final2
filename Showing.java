@@ -12,7 +12,7 @@ import java.time.LocalTime;
  * Holds a collection of seats that can be marked available or unavailable.
  *
  * @author: Artemis MacDuffie, Ryan Connell, & Tara Nordmann
- * @version: 5/5/2023
+ * @version: 5/7/2023
  */
 public class Showing
 {

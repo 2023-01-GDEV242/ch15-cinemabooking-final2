@@ -20,25 +20,19 @@ C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\doc
 UTF-8
 -charset
 UTF-8
-C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java
+C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\Showing.java
 <---- end of javadoc command ---->
-Loading source file C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java...
+Loading source file C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\Showing.java...
 Constructing Javadoc information...
 Standard Doclet version 17.0.4+8
 Building tree for all the packages and classes...
-Generating C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\doc\CinemaBookingSystem.html...
-C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java:13: warning: invalid input: '&'
- * It will use classes named Showing, Theater, Customer, Film, Booking, Row, & Seat
-                                                                             ^
-C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java:385: warning: @param argument "showing" is not a parameter name.
-     * @param showing The showing associated with the booking.
+Generating C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\doc\Showing.html...
+C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\Showing.java:165: warning: @param argument "The" is not a parameter name.
+     * @param The collection of all seats of the showing.
        ^
-C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java:531: warning: @param argument "time" is not a parameter name.
-     * @param time the time to search for
-       ^
-C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\CinemaBookingSystem.java:564: warning: @param argument "affectedCustomers" is not a parameter name.
-     * @param affectedCustomers the set of customers who have
+C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\Showing.java:352: warning: @param argument "The" is not a parameter name.
+     * @param The seat number.
        ^
 Generating C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\doc\package-summary.html...
 Generating C:\Users\macfl\Desktop\OOP\ch15-cinemabooking-final2\doc\index.html...
-4 warnings
+2 warnings
